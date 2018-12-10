@@ -29,8 +29,16 @@
     <objectAnimator
         android:duration="2000"
         android:interpolator="@android:interpolator/overshoot"
-        android:propertyName="translateY"
+        android:propertyName="scaleX"
         android:valueType="floatType"
-        android:valueFrom="50"
-        android:valueTo="0" />
+        android:valueFrom="0.0f"
+        android:valueTo="1.0f" />
+
+    <objectAnimator
+        android:duration="2000"
+        android:interpolator="@android:interpolator/overshoot"
+        android:propertyName="scaleY"
+        android:valueType="floatType"
+        android:valueFrom="0.0f"
+        android:valueTo="1.0f" />
 </set>
