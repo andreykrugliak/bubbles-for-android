@@ -43,7 +43,7 @@
         android:valueTo="0.0f" />
 
     <objectAnimator
-        android:propertyName="translateY"
+        android:propertyName="translationY"
         android:duration="2000"
         android:valueFrom="0.0f"
         android:valueTo="14.0f"
