@@ -70,7 +70,7 @@ public class BubblesManager {
 
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
-        bubblesService.addShwonAnimation(animationResourceId)
+        bubblesService.addShwonAnimation(animationResourceId);
     }
 
     public void initialize() {
