@@ -105,6 +105,12 @@ public class BubblesService extends Service {
         }
     }
 
+    void addShwonAnimation(int animationResourceId) {
+        if (animationResourceId != 0 && bubblesTrash != null) {
+            bubblesTrash.setAnimationShownResourceId(animationResourceId);
+        }
+    }
+
     private void initializeLayoutCoordinator() {
         layoutCoordinator = new BubblesLayoutCoordinator.Builder(this)
                 .setWindowManager(getWindowManager())

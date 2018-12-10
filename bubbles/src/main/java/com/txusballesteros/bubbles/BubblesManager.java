@@ -36,6 +36,7 @@ public class BubblesManager {
     private boolean bounded;
     private BubblesService bubblesService;
     private int trashLayoutResourceId;
+    private int animationResourceId;
     private OnInitializedCallback listener;
 
     private static BubblesManager getInstance(Context context) {
@@ -69,6 +70,7 @@ public class BubblesManager {
 
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
+        bubblesService.addShwonAnimation(animationResourceId)
     }
 
     public void initialize() {
