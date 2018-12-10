@@ -35,6 +35,7 @@ class BubbleTrashLayout extends BubbleBaseLayout {
     private boolean magnetismApplied = false;
     private boolean attachedToWindow = false;
     private boolean isVibrateInThisSession = false;
+    private int animationResourceId = R.animator.bubble_trash_shown_animator;
 
     public BubbleTrashLayout(Context context) {
         super(context);
@@ -65,7 +66,7 @@ class BubbleTrashLayout extends BubbleBaseLayout {
         if (attachedToWindow) {
             if (visibility != getVisibility()) {
                 if (visibility == VISIBLE) {
-                    playAnimation(R.animator.bubble_trash_shown_animator);
+                    playAnimation(animationResourceId);
 
 
                 } else {
@@ -98,6 +99,10 @@ class BubbleTrashLayout extends BubbleBaseLayout {
         }
 
         isVibrateInThisSession = false;
+    }
+
+    void setAnimationShownResourceId(int animationResourceId) {
+        this.animationResourceId = animationResourceId;
     }
 
     private void playAnimation(int animationResourceId) {
