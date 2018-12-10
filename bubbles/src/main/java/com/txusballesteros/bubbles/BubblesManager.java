@@ -70,7 +70,6 @@ public class BubblesManager {
 
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
-        bubblesService.addShwonAnimation(animationResourceId);
     }
 
     public void initialize() {
@@ -109,11 +108,6 @@ public class BubblesManager {
 
         public Builder setTrashLayout(int trashLayoutResourceId) {
             bubblesManager.trashLayoutResourceId =trashLayoutResourceId;
-            return this;
-        }
-
-        public Builder setShownAnimationLayout(int animationResourceId) {
-            bubblesManager.animationResourceId = animationResourceId;
             return this;
         }
 
