@@ -24,7 +24,11 @@
  */
 package com.txusballesteros.bubbles.app;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +46,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        findViewById(R.id.add).setVisibility(View.GONE);
 
-        initializeBubblesManager();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 1234);
+            } else {
+                initializeBubblesManager();
+                findViewById(R.id.add).setVisibility(View.VISIBLE);
+            }
+        } else {
+            initializeBubblesManager();
+            findViewById(R.id.add).setVisibility(View.VISIBLE);
+        }
 
         findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,23 +70,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void addNewBubble() {
-        BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
-        bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
-            @Override
-            public void onBubbleRemoved(BubbleLayout bubble) {
-            }
-        });
-        bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1234) {
+            findViewById(R.id.add).setVisibility(View.VISIBLE);
+            initializeBubblesManager();
+        }
+    }
 
-            @Override
-            public void onBubbleClick(BubbleLayout bubble) {
-                Toast.makeText(getApplicationContext(), "Clicked !",
-                        Toast.LENGTH_SHORT).show();
+    private void addNewBubble() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
+                BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
+                bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
+                    @Override
+                    public void onBubbleRemoved(BubbleLayout bubble) {
+                    }
+                });
+                bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
+
+                    @Override
+                    public void onBubbleClick(BubbleLayout bubble) {
+                        Toast.makeText(getApplicationContext(), "Clicked !",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+                bubbleView.setShouldStickToWall(true);
+                bubblesManager.addBubble(bubbleView, 60, 20);
             }
-        });
-        bubbleView.setShouldStickToWall(true);
-        bubblesManager.addBubble(bubbleView, 60, 20);
+        }
     }
 
     private void initializeBubblesManager() {

@@ -41,10 +41,11 @@
     <!--android:valueFrom="1.0f"-->
     <!--android:valueTo="0.0f" />-->
 
-    <translate
+    <objectAnimator
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:duration="500"
-        android:fillAfter="true"
-        android:fromYDelta="0%p"
-        android:interpolator="@android:anim/linear_interpolator"
-        android:toYDelta="100%p" />
+        android:propertyName="y"
+        android:valueFrom="1000"
+        android:valueTo="0"
+        android:valueType="floatType" />
 </set>
