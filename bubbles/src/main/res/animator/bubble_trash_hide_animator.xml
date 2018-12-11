@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  * Copyright Txus Ballesteros 2015 (@txusballesteros)
  *
  * This file is part of some open source application.
@@ -26,27 +25,26 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:ordering="together">
 
-    <objectAnimator
-        android:duration="1000"
-        android:interpolator="@android:interpolator/decelerate_cubic"
-        android:propertyName="scaleX"
-        android:valueType="floatType"
-        android:valueFrom="1.0f"
-        android:valueTo="0.0f" />
+    <!--<objectAnimator-->
+    <!--android:duration="100"-->
+    <!--android:interpolator="@android:interpolator/decelerate_cubic"-->
+    <!--android:propertyName="scaleX"-->
+    <!--android:valueType="floatType"-->
+    <!--android:valueFrom="1.0f"-->
+    <!--android:valueTo="0.0f" />-->
 
-    <objectAnimator
-        android:duration="1000"
-        android:interpolator="@android:interpolator/decelerate_cubic"
-        android:propertyName="scaleY"
-        android:valueType="floatType"
-        android:valueFrom="1.0f"
-        android:valueTo="0.0f" />
+    <!--<objectAnimator-->
+    <!--android:duration="100"-->
+    <!--android:interpolator="@android:interpolator/decelerate_cubic"-->
+    <!--android:propertyName="scaleY"-->
+    <!--android:valueType="floatType"-->
+    <!--android:valueFrom="1.0f"-->
+    <!--android:valueTo="0.0f" />-->
 
-    <objectAnimator
-        android:propertyName="translationY"
-        android:duration="2000"
-        android:valueFrom="0"
-        android:valueTo="14"
-        android:valueType="floatType"
-        android:interpolator="@android:anim/overshoot_interpolator"/>
+    <translate
+        android:duration="500"
+        android:fillAfter="true"
+        android:fromYDelta="0%p"
+        android:interpolator="@android:anim/linear_interpolator"
+        android:toYDelta="100%p" />
 </set>
