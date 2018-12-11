@@ -105,9 +105,9 @@ public class BubblesService extends Service {
         }
     }
 
-    void addTrashAnimation(int trashAnimationResourceId) {
-        if (trashAnimationResourceId != 0 && bubblesTrash != null) {
-            bubblesTrash.setTrashAnimationResourceId(trashAnimationResourceId);
+    void addTrashAnimations(int shownAnimatorResourceId, int hideAnimatorResourceId) {
+        if (shownAnimatorResourceId != 0 && hideAnimatorResourceId != 0 && bubblesTrash != null) {
+            bubblesTrash.setTrashAnimatorResourceIds(shownAnimatorResourceId, hideAnimatorResourceId);
         }
     }
 

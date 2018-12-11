@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeBubblesManager() {
         bubblesManager = new BubblesManager.Builder(this)
                 .setTrashLayout(R.layout.bubble_trash_layout)
-                .setTrashAnimation(R.animator.bubble_trash_shown_animator)
+                .setTrashAnimations(R.animator.bubble_trash_shown_animator, R.animator.bubble_trash_hide_animator)
                 .setInitializationCallback(new OnInitializedCallback() {
                     @Override
                     public void onInitialized() {

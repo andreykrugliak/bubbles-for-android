@@ -35,7 +35,9 @@ class BubbleTrashLayout extends BubbleBaseLayout {
     private boolean magnetismApplied = false;
     private boolean attachedToWindow = false;
     private boolean isVibrateInThisSession = false;
-    private int trashAnimationResourceId = R.animator.bubble_trash_shown_animator;
+    private int shownAnimatorResourceId = R.animator.bubble_trash_shown_animator;
+    private int hideAnimatorResourceId = R.animator.bubble_trash_hide_animator;
+
 
     public BubbleTrashLayout(Context context) {
         super(context);
@@ -66,11 +68,11 @@ class BubbleTrashLayout extends BubbleBaseLayout {
         if (attachedToWindow) {
             if (visibility != getVisibility()) {
                 if (visibility == VISIBLE) {
-                    playAnimation(trashAnimationResourceId);
+                    playAnimation(shownAnimatorResourceId);
 
 
                 } else {
-                    playAnimation(R.animator.bubble_trash_hide_animator);
+                    playAnimation(hideAnimatorResourceId);
                 }
             }
         }
@@ -101,8 +103,9 @@ class BubbleTrashLayout extends BubbleBaseLayout {
         isVibrateInThisSession = false;
     }
 
-    void setTrashAnimationResourceId(int trashAnimationResourceId) {
-        this.trashAnimationResourceId = trashAnimationResourceId;
+    void setTrashAnimatorResourceIds(int shownAnimatorResourceId, int hideAnimatorResourceId) {
+        this.shownAnimatorResourceId = shownAnimatorResourceId;
+        this.hideAnimatorResourceId = hideAnimatorResourceId;
     }
 
     private void playAnimation(int animationResourceId) {
