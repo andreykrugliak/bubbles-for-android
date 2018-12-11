@@ -37,7 +37,9 @@ public class BubblesManager {
     private BubblesService bubblesService;
     private int trashLayoutResourceId;
     private OnInitializedCallback listener;
-    private int trashAnimationResourceId;
+    private int shownAnimatorResourceId;
+    private int hideAnimatorResourceId;
+
 
     private static BubblesManager getInstance(Context context) {
         if (INSTANCE == null) {
@@ -70,7 +72,7 @@ public class BubblesManager {
 
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
-        bubblesService.addTrashAnimation(trashAnimationResourceId);
+        bubblesService.addTrashAnimations(shownAnimatorResourceId, hideAnimatorResourceId);
     }
 
     public void initialize() {
@@ -112,8 +114,9 @@ public class BubblesManager {
             return this;
         }
 
-        public Builder setTrashAnimation(int trashAnimationResourceId) {
-            bubblesManager.trashAnimationResourceId =trashAnimationResourceId;
+        public Builder setTrashAnimations(int shownAnimatorResourceId, int hideAnimatorResourceId) {
+            bubblesManager.shownAnimatorResourceId = shownAnimatorResourceId;
+            bubblesManager.hideAnimatorResourceId = hideAnimatorResourceId;
             return this;
         }
 
