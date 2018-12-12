@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public class BubblesService extends Service {
     private BubbleTrashLayout bubblesTrash;
     private WindowManager windowManager;
     private BubblesLayoutCoordinator layoutCoordinator;
+    private boolean allowRedundancies = true;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -85,6 +87,14 @@ public class BubblesService extends Service {
     }
 
     public void addBubble(BubbleLayout bubble, int x, int y) {
+        if (!allowRedundancies && bubble.getTag() != null) {
+            for (BubbleLayout bubbleLayout : bubbles) {
+                if (bubble.getTag().equals(bubbleLayout.getTag())) {
+                    return;
+                }
+            }
+        }
+
         WindowManager.LayoutParams layoutParams = buildLayoutParamsForBubble(x, y);
         bubble.setWindowManager(getWindowManager());
         bubble.setViewParams(layoutParams);
@@ -109,6 +119,10 @@ public class BubblesService extends Service {
         if (shownAnimatorResourceId != 0 && hideAnimatorResourceId != 0 && bubblesTrash != null) {
             bubblesTrash.setTrashAnimatorResourceIds(shownAnimatorResourceId, hideAnimatorResourceId);
         }
+    }
+
+    public void setAllowRedundancies(boolean allowRedundancies) {
+        this.allowRedundancies = allowRedundancies;
     }
 
     private void initializeLayoutCoordinator() {

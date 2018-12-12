@@ -39,6 +39,7 @@ public class BubblesManager {
     private OnInitializedCallback listener;
     private int shownAnimatorResourceId;
     private int hideAnimatorResourceId;
+    private boolean allowRedundancies = true;
 
 
     private static BubblesManager getInstance(Context context) {
@@ -73,6 +74,7 @@ public class BubblesManager {
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
         bubblesService.addTrashAnimations(shownAnimatorResourceId, hideAnimatorResourceId);
+        bubblesService.setAllowRedundancies(allowRedundancies);
     }
 
     public void initialize() {
@@ -106,6 +108,11 @@ public class BubblesManager {
 
         public Builder setInitializationCallback(OnInitializedCallback listener) {
             bubblesManager.listener = listener;
+            return this;
+        }
+
+        public Builder setAllowRedundancies(boolean allowRedundancies) {
+            bubblesManager.allowRedundancies =allowRedundancies;
             return this;
         }
 

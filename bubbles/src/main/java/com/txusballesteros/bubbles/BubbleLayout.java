@@ -49,6 +49,7 @@ public class BubbleLayout extends BubbleBaseLayout {
     private int width;
     private WindowManager windowManager;
     private boolean shouldStickToWall = true;
+    private Object tag;
 
     public void setOnBubbleRemoveListener(OnBubbleRemoveListener listener) {
         onBubbleRemoveListener = listener;
@@ -81,6 +82,14 @@ public class BubbleLayout extends BubbleBaseLayout {
 
     public void setShouldStickToWall(boolean shouldStick) {
         this.shouldStickToWall = shouldStick;
+    }
+
+    public Object getTag() {
+        return tag;
+    }
+
+    public void setTag(Object tag) {
+        this.tag = tag;
     }
 
     void notifyBubbleRemoved() {
