@@ -28,6 +28,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
@@ -37,12 +38,15 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 public class BubbleLayout extends BubbleBaseLayout {
+    private final static int HOLDING_TIME = 1000;
+
     private float initialTouchX;
     private float initialTouchY;
     private int initialX;
     private int initialY;
     private OnBubbleRemoveListener onBubbleRemoveListener;
     private OnBubbleClickListener onBubbleClickListener;
+    private OnHoldingBubbleListener onHoldingBubbleListener;
     private static final int TOUCH_TIME_THRESHOLD = 150;
     private long lastTouchDown;
     private MoveAnimator animator;
@@ -50,6 +54,7 @@ public class BubbleLayout extends BubbleBaseLayout {
     private WindowManager windowManager;
     private boolean shouldStickToWall = true;
     private Object tag;
+    private CountDownTimer holdingTimer;
 
     public void setOnBubbleRemoveListener(OnBubbleRemoveListener listener) {
         onBubbleRemoveListener = listener;
@@ -57,6 +62,10 @@ public class BubbleLayout extends BubbleBaseLayout {
 
     public void setOnBubbleClickListener(OnBubbleClickListener listener) {
         onBubbleClickListener = listener;
+    }
+
+    public void setOnHoldingBubbleListener(OnHoldingBubbleListener listener) {
+        onHoldingBubbleListener = listener;
     }
 
     public BubbleLayout(Context context) {
@@ -121,10 +130,12 @@ public class BubbleLayout extends BubbleBaseLayout {
                     lastTouchDown = System.currentTimeMillis();
                     updateSize();
                     animator.stop();
+
+                    setTimer();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int x = initialX + (int)(event.getRawX() - initialTouchX);
-                    int y = initialY + (int)(event.getRawY() - initialTouchY);
+                    int x = initialX + (int) (event.getRawX() - initialTouchX);
+                    int y = initialY + (int) (event.getRawY() - initialTouchY);
                     getViewParams().x = x;
                     getViewParams().y = y;
                     getWindowManager().updateViewLayout(this, getViewParams());
@@ -143,6 +154,8 @@ public class BubbleLayout extends BubbleBaseLayout {
                             onBubbleClickListener.onBubbleClick(this);
                         }
                     }
+
+                    stopTimer();
                     break;
             }
         }
@@ -194,8 +207,12 @@ public class BubbleLayout extends BubbleBaseLayout {
         void onBubbleClick(BubbleLayout bubble);
     }
 
+    public interface OnHoldingBubbleListener {
+        void onHoldingBubble(BubbleLayout bubble);
+    }
+
     public void goToWall() {
-        if(shouldStickToWall){
+        if (shouldStickToWall) {
             int middle = width / 2;
             float nearestXWall = getViewParams().x >= middle ? width : 0;
             animator.start(nearestXWall, getViewParams().y);
@@ -226,8 +243,8 @@ public class BubbleLayout extends BubbleBaseLayout {
         public void run() {
             if (getRootView() != null && getRootView().getParent() != null) {
                 float progress = Math.min(1, (System.currentTimeMillis() - startingTime) / 400f);
-                float deltaX = (destinationX -  getViewParams().x) * progress;
-                float deltaY = (destinationY -  getViewParams().y) * progress;
+                float deltaX = (destinationX - getViewParams().x) * progress;
+                float deltaY = (destinationY - getViewParams().y) * progress;
                 move(deltaX, deltaY);
                 if (progress < 1) {
                     handler.post(this);
@@ -238,5 +255,31 @@ public class BubbleLayout extends BubbleBaseLayout {
         private void stop() {
             handler.removeCallbacks(this);
         }
+    }
+
+    private void setTimer() {
+        if (holdingTimer != null) {
+            stopTimer();
+        }
+
+        startTimer();
+    }
+
+    private void stopTimer() {
+        holdingTimer.cancel();
+    }
+
+    private void startTimer() {
+        holdingTimer = new CountDownTimer(HOLDING_TIME, HOLDING_TIME) {
+
+            public void onTick(long millisUntilFinished) {
+            }
+
+            public void onFinish() {
+                if (onHoldingBubbleListener != null) {
+                    onHoldingBubbleListener.onHoldingBubble(BubbleLayout.this);
+                }
+            }
+        }.start();
     }
 }

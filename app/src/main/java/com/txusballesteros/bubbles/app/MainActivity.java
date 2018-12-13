@@ -68,6 +68,13 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+        bubbleView.setOnHoldingBubbleListener(new BubbleLayout.OnHoldingBubbleListener() {
+            @Override
+            public void onHoldingBubble(BubbleLayout bubble) {
+                Toast.makeText(getApplicationContext(), "You are holding Bubble!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         bubbleView.setShouldStickToWall(true);
         bubblesManager.addBubble(bubbleView, 60, 20);
     }
