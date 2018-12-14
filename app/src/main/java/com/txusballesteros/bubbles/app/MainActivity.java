@@ -75,6 +75,15 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+        bubbleView.setOnBubbleStickToWallListener(new BubbleLayout.OnBubbleStickToWallListener() {
+            @Override
+            public void onBubbleStickToWall(BubbleLayout bubble, boolean leftSide) {
+                String side = leftSide ? "left side" : "right side";
+
+                Toast.makeText(getApplicationContext(), "Bubble has stick on " + side + " wall",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         bubbleView.setShouldStickToWall(true);
         bubblesManager.addBubble(bubbleView, 60, 20);
     }
