@@ -49,6 +49,7 @@ public class BubbleLayout extends BubbleBaseLayout {
     private OnHoldingBubbleListener onHoldingBubbleListener;
     private OnBubbleStickToWallListener onBubbleStickToWallListener;
     private static final int TOUCH_TIME_THRESHOLD = 150;
+    private static final int HOLD_TIME_THRESHOLD = 500;
     private long lastTouchDown;
     private MoveAnimator animator;
     private int width;
@@ -149,15 +150,17 @@ public class BubbleLayout extends BubbleBaseLayout {
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    goToWall();
-                    if (getLayoutCoordinator() != null) {
-                        getLayoutCoordinator().notifyBubbleRelease(this);
-                        playAnimationClickUp();
-                    }
                     if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
                         if (onBubbleClickListener != null) {
                             onBubbleClickListener.onBubbleClick(this);
                         }
+                    }
+
+                    goToWall();
+
+                    if (getLayoutCoordinator() != null) {
+                        getLayoutCoordinator().notifyBubbleRelease(this);
+                        playAnimationClickUp();
                     }
 
                     stopTimer();
