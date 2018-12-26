@@ -24,7 +24,9 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Binder;
@@ -36,6 +38,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -75,6 +78,15 @@ public class BubblesService extends Service {
                         break;
                     }
                 }
+            }
+        });
+    }
+
+    private void recycleLargeView(final View view) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                getWindowManager().removeView(view);
             }
         });
     }
@@ -123,6 +135,22 @@ public class BubblesService extends Service {
 
     public void setAllowRedundancies(boolean allowRedundancies) {
         this.allowRedundancies = allowRedundancies;
+    }
+
+    public void addDialogView(final View view) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (view.getParent() != null) {
+                    ((ViewGroup) view.getParent()).removeView(view);
+                }
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
+                final AlertDialog alertDialog = builder.create();
+                alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                alertDialog.show();
+            }
+        });
     }
 
     private void initializeLayoutCoordinator() {
@@ -181,6 +209,10 @@ public class BubblesService extends Service {
 
     public void removeBubble(BubbleLayout bubble) {
         recycleBubble(bubble);
+    }
+
+    public void removeLargeView(View view) {
+        recycleLargeView(view);
     }
 
     public class BubblesServiceBinder extends Binder {

@@ -29,6 +29,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class BubblesManager {
     private static BubblesManager INSTANCE;
@@ -97,6 +99,14 @@ public class BubblesManager {
         if (bounded) {
             bubblesService.removeBubble(bubble);
         }
+    }
+
+    public void removeLargeView(View view) {
+        bubblesService.removeLargeView(view);
+    }
+
+    public void addDialogView(View view) {
+        bubblesService.addDialogView(view);
     }
 
     public static class Builder {

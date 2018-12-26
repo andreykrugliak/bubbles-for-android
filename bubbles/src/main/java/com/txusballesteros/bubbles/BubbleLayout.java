@@ -35,6 +35,8 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 public class BubbleLayout extends BubbleBaseLayout {
@@ -56,6 +58,7 @@ public class BubbleLayout extends BubbleBaseLayout {
     private boolean shouldStickToWall = true;
     private Object tag;
     private CountDownTimer holdingTimer;
+    private View dialogView;
 
     public void setOnBubbleRemoveListener(OnBubbleRemoveListener listener) {
         onBubbleRemoveListener = listener;
@@ -104,6 +107,14 @@ public class BubbleLayout extends BubbleBaseLayout {
 
     public void setTag(Object tag) {
         this.tag = tag;
+    }
+
+    public View getDialogView() {
+        return dialogView;
+    }
+
+    public void setDialogView(View view) {
+        dialogView = view;
     }
 
     void notifyBubbleRemoved() {

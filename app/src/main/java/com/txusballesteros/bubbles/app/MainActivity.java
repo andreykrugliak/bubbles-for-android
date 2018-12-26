@@ -54,18 +54,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addNewBubble() {
-        BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
+        final BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
         bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
             @Override
             public void onBubbleRemoved(BubbleLayout bubble) {
             }
         });
+
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.view_dialog_bubble, null);
+
+        bubbleView.setDialogView(dialogView);
+
         bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
 
             @Override
-            public void onBubbleClick(BubbleLayout bubble) {
+            public void onBubbleClick(final BubbleLayout bubble) {
                 Toast.makeText(getApplicationContext(), "Clicked !",
                         Toast.LENGTH_SHORT).show();
+
+                if (bubble.getDialogView() != null) {
+                    bubblesManager.addDialogView(bubble.getDialogView());
+                }
             }
         });
         bubbleView.setOnHoldingBubbleListener(new BubbleLayout.OnHoldingBubbleListener() {
