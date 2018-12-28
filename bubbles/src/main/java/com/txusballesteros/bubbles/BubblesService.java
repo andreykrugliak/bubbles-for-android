@@ -137,7 +137,7 @@ public class BubblesService extends Service {
         this.allowRedundancies = allowRedundancies;
     }
 
-    public void addDialogView(final View view) {
+    public void addDialogView(final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -148,6 +148,8 @@ public class BubblesService extends Service {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
                 final AlertDialog alertDialog = builder.create();
                 alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+                alertDialog.setOnDismissListener(onDismissListener);
+                alertDialog.setOnCancelListener(onCancelListener);
                 alertDialog.show();
             }
         });

@@ -24,6 +24,7 @@
  */
 package com.txusballesteros.bubbles.app;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -73,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
 
                 if (bubble.getDialogView() != null) {
-                    bubblesManager.addDialogView(bubble.getDialogView());
+                    bubblesManager.addDialogView(bubble.getDialogView(), null, null);
                 }
             }
         });
