@@ -24,6 +24,7 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -31,7 +32,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.view.View;
-import android.view.ViewGroup;
 
 public class BubblesManager {
     private static BubblesManager INSTANCE;
@@ -102,12 +102,12 @@ public class BubblesManager {
         }
     }
 
-    public void removeLargeView(View view) {
-        bubblesService.removeLargeView(view);
+    public void removeDialog(AlertDialog dialog) {
+        bubblesService.removeDialog(dialog);
     }
 
-    public void addDialogView(View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
-        bubblesService.addDialogView(view, onDismissListener, onCancelListener);
+    public AlertDialog addDialogView(View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+        return bubblesService.addDialogView(view, onDismissListener, onCancelListener);
     }
 
     public static class Builder {

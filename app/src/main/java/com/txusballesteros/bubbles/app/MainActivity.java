@@ -24,11 +24,12 @@
  */
 package com.txusballesteros.bubbles.app;
 
-import android.content.DialogInterface;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.txusballesteros.bubbles.BubbleLayout;
@@ -62,7 +63,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.view_dialog_bubble, null);
+        final AlertDialog[] dialog = new AlertDialog[1];
+
+        final Button dialogView = new Button(getApplicationContext());
+        dialogView.setText("CLICK ME PLEASE");
+        dialogView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               bubblesManager.removeDialog(dialog[0]);
+               dialog[0] = null;
+            }
+        });
 
         bubbleView.setDialogView(dialogView);
 
@@ -74,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
 
                 if (bubble.getDialogView() != null) {
-                    bubblesManager.addDialogView(bubble.getDialogView(), null, null);
+                    dialog[0] = bubblesManager.addDialogView(bubble.getDialogView(), null, null);
                 }
             }
         });

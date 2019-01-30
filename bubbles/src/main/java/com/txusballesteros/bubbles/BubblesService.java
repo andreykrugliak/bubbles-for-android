@@ -34,7 +34,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,11 +81,11 @@ public class BubblesService extends Service {
         });
     }
 
-    private void recycleLargeView(final View view) {
+    private void recycleDialog(final AlertDialog dialog) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                getWindowManager().removeView(view);
+                dialog.cancel();
             }
         });
     }
@@ -137,7 +136,13 @@ public class BubblesService extends Service {
         this.allowRedundancies = allowRedundancies;
     }
 
-    public void addDialogView(final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+    public AlertDialog addDialogView(final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
+        final AlertDialog alertDialog = builder.create();
+        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        alertDialog.setOnDismissListener(onDismissListener);
+        alertDialog.setOnCancelListener(onCancelListener);
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -145,14 +150,11 @@ public class BubblesService extends Service {
                     ((ViewGroup) view.getParent()).removeView(view);
                 }
 
-                final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
-                final AlertDialog alertDialog = builder.create();
-                alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
-                alertDialog.setOnDismissListener(onDismissListener);
-                alertDialog.setOnCancelListener(onCancelListener);
                 alertDialog.show();
             }
         });
+
+        return alertDialog;
     }
 
     private void initializeLayoutCoordinator() {
@@ -213,8 +215,8 @@ public class BubblesService extends Service {
         recycleBubble(bubble);
     }
 
-    public void removeLargeView(View view) {
-        recycleLargeView(view);
+    public void removeDialog(AlertDialog dialog) {
+        recycleDialog(dialog);
     }
 
     public class BubblesServiceBinder extends Binder {
