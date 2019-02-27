@@ -139,7 +139,16 @@ public class BubblesService extends Service {
     public AlertDialog addDialogView(final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
         final AlertDialog alertDialog = builder.create();
-        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+
+        int typeOverlay = WindowManager.LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            typeOverlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setType(typeOverlay);
+        }
+
         alertDialog.setOnDismissListener(onDismissListener);
         alertDialog.setOnCancelListener(onCancelListener);
 
