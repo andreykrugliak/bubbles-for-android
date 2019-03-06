@@ -83,7 +83,7 @@ public class BubblesService extends Service {
         });
     }
 
-    private void recycleDialog(final AlertDialog dialog) {
+    private void recycleDialog(final BubbleLayout bubbleView, final AlertDialog dialog) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -156,35 +156,18 @@ public class BubblesService extends Service {
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
-
             alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
                     final View view = alertDialog.getWindow().getDecorView();
-//                    int w = view.getWidth();
-//                    int h = view.getHeight();
-//
-//                    int endRadius = (int) Math.hypot(w, h);
-//
-//                    int cx = (int) (bubbleView.getX() + (bubbleView.getWidth()/2));
-//                    int cy = (int) (bubbleView.getY() + (bubbleView.getHeight() / 2));
-//
-//                    Animator animator = animator = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, endRadius);
-//
-//                    animator.setDuration(1000);
-//                    animator.start();
 
                     final int centerX = view.getWidth() / 2;
                     final int centerY = view.getHeight() / 2;
-                    // TODO Get startRadius from FAB
-                    // TODO Also translate animate FAB to center of screen?
                     float startRadius = 20;
                     float endRadius = view.getHeight();
-                    Animator animator = null;
-                        animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                        animator.setDuration(1000);
-                        animator.start();
-
+                    Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                    animator.setDuration(1000);
+                    animator.start();
                 }
             });
         }
@@ -196,7 +179,31 @@ public class BubblesService extends Service {
                     ((ViewGroup) view.getParent()).removeView(view);
                 }
 
-                alertDialog.show();
+                bubbleView.setOnBubbleGoToCenterListener(new BubbleLayout.OnBubbleGoToCenterListener() {
+                    @Override
+                    public void onBubbleGoToCenterListener(BubbleLayout bubble, final int oldX, final int oldY) {
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                bubbleView.setVisibility(View.INVISIBLE);
+
+                                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        bubbleView.setVisibility(View.VISIBLE);
+                                        bubbleView.goTo(oldX, oldY);
+                                    }
+                                });
+                            }
+                        }, 1000);
+
+                        alertDialog.show();
+                    }
+                });
+
+                bubbleView.goToCenter();
             }
         });
 
@@ -261,8 +268,8 @@ public class BubblesService extends Service {
         recycleBubble(bubble);
     }
 
-    public void removeDialog(AlertDialog dialog) {
-        recycleDialog(dialog);
+    public void removeDialog(final BubbleLayout bubbleView, AlertDialog dialog) {
+        recycleDialog(bubbleView, dialog);
     }
 
     public class BubblesServiceBinder extends Binder {

@@ -102,8 +102,8 @@ public class BubblesManager {
         }
     }
 
-    public void removeDialog(AlertDialog dialog) {
-        bubblesService.removeDialog(dialog);
+    public void removeDialog(final BubbleLayout bubbleView, AlertDialog dialog) {
+        bubblesService.removeDialog(bubbleView, dialog);
     }
 
     public AlertDialog addDialogView(BubbleLayout bubbleView, View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {

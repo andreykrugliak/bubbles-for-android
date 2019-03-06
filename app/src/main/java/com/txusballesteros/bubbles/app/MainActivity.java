@@ -65,21 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog[] dialog = new AlertDialog[1];
 
-//        final Button dialogView = new Button(getApplicationContext());
-//        dialogView.setText("CLICK ME PLEASE");
-//        dialogView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//               bubblesManager.removeDialog(dialog[0]);
-//               dialog[0] = null;
-//            }
-//        });
-
         final View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_dialog, null, false);
         (dialogView.findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bubblesManager.removeDialog(dialog[0]);
+                bubblesManager.removeDialog(bubbleView, dialog[0]);
                 dialog[0] = null;
             }
         });

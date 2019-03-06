@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 
 public class BubbleLayout extends BubbleBaseLayout {
     private final static int HOLDING_TIME = 1000;
@@ -50,10 +51,12 @@ public class BubbleLayout extends BubbleBaseLayout {
     private OnBubbleClickListener onBubbleClickListener;
     private OnHoldingBubbleListener onHoldingBubbleListener;
     private OnBubbleStickToWallListener onBubbleStickToWallListener;
+    private OnBubbleGoToCenterListener onBubbleGoToCenterListener;
     private static final int TOUCH_TIME_THRESHOLD = 150;
     private long lastTouchDown;
     private MoveAnimator animator;
     private int width;
+    private int height;
     private WindowManager windowManager;
     private boolean shouldStickToWall = true;
     private Object tag;
@@ -74,6 +77,10 @@ public class BubbleLayout extends BubbleBaseLayout {
 
     public void setOnBubbleStickToWallListener(OnBubbleStickToWallListener listener) {
         onBubbleStickToWallListener = listener;
+    }
+
+    public void setOnBubbleGoToCenterListener(OnBubbleGoToCenterListener listener) {
+        onBubbleGoToCenterListener = listener;
     }
 
     public BubbleLayout(Context context) {
@@ -212,6 +219,7 @@ public class BubbleLayout extends BubbleBaseLayout {
         Point size = new Point();
         display.getSize(size);
         width = (size.x - this.getWidth());
+        height = (size.y - this.getHeight());
 
     }
 
@@ -231,16 +239,41 @@ public class BubbleLayout extends BubbleBaseLayout {
         void onBubbleStickToWall(BubbleLayout bubble, boolean leftSide);
     }
 
+    public interface OnBubbleGoToCenterListener {
+        void onBubbleGoToCenterListener(BubbleLayout bubble, int oldX, int oldY);
+    }
+
     public void goToWall() {
         if (shouldStickToWall) {
             int middle = width / 2;
             float nearestXWall = getViewParams().x >= middle ? width : 0;
             animator.start(nearestXWall, getViewParams().y);
 
+
             if (onBubbleStickToWallListener != null) {
                 onBubbleStickToWallListener.onBubbleStickToWall(this, getViewParams().x < middle);
             }
         }
+    }
+
+    public void goToCenter() {
+        int oldX = (int) this.getViewParams().x;
+        int oldY = (int) this.getViewParams().y;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        animator.start((width/2) - (getWidth()/2), (height/2) - (getHeight()/2));
+
+
+        if (onBubbleGoToCenterListener != null) {
+            onBubbleGoToCenterListener.onBubbleGoToCenterListener(this, oldX, oldY);
+        }
+    }
+
+    public void goTo(int coordinateX, int coordinateY) {
+        animator.start(coordinateX, coordinateY);
     }
 
     private void move(float deltaX, float deltaY) {
