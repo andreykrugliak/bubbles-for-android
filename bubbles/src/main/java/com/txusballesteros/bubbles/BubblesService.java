@@ -182,12 +182,12 @@ public class BubblesService extends Service {
                 bubbleView.setOnBubbleGoToCenterListener(new BubbleLayout.OnBubbleGoToCenterListener() {
                     @Override
                     public void onBubbleGoToCenterListener(BubbleLayout bubble, final int oldX, final int oldY) {
-
                         Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 bubbleView.setVisibility(View.INVISIBLE);
+                                alertDialog.setCancelable(true);
 
                                 alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                                     @Override
@@ -199,6 +199,7 @@ public class BubblesService extends Service {
                             }
                         }, 1000);
 
+                        alertDialog.setCancelable(false);
                         alertDialog.show();
                     }
                 });
