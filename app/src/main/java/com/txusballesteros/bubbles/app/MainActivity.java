@@ -65,13 +65,22 @@ public class MainActivity extends AppCompatActivity {
 
         final AlertDialog[] dialog = new AlertDialog[1];
 
-        final Button dialogView = new Button(getApplicationContext());
-        dialogView.setText("CLICK ME PLEASE");
-        dialogView.setOnClickListener(new View.OnClickListener() {
+//        final Button dialogView = new Button(getApplicationContext());
+//        dialogView.setText("CLICK ME PLEASE");
+//        dialogView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//               bubblesManager.removeDialog(dialog[0]);
+//               dialog[0] = null;
+//            }
+//        });
+
+        final View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_dialog, null, false);
+        (dialogView.findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               bubblesManager.removeDialog(dialog[0]);
-               dialog[0] = null;
+                bubblesManager.removeDialog(dialog[0]);
+                dialog[0] = null;
             }
         });
 
@@ -85,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
 
                 if (bubble.getDialogView() != null) {
-                    dialog[0] = bubblesManager.addDialogView(bubble.getDialogView(), null, null);
+                    dialog[0] = bubblesManager.addDialogView(bubbleView, bubble.getDialogView(), null, null);
                 }
             }
         });

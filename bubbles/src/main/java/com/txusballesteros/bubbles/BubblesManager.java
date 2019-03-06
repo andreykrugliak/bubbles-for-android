@@ -106,8 +106,8 @@ public class BubblesManager {
         bubblesService.removeDialog(dialog);
     }
 
-    public AlertDialog addDialogView(View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
-        return bubblesService.addDialogView(view, onDismissListener, onCancelListener);
+    public AlertDialog addDialogView(BubbleLayout bubbleView, View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+        return bubblesService.addDialogView(bubbleView, view, onDismissListener, onCancelListener);
     }
 
     public static class Builder {

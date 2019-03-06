@@ -24,6 +24,7 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.animation.Animator;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
@@ -37,6 +38,7 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
@@ -136,7 +138,7 @@ public class BubblesService extends Service {
         this.allowRedundancies = allowRedundancies;
     }
 
-    public AlertDialog addDialogView(final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+    public AlertDialog addDialogView(final BubbleLayout bubbleView, final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
         final AlertDialog alertDialog = builder.create();
 
@@ -151,6 +153,41 @@ public class BubblesService extends Service {
 
         alertDialog.setOnDismissListener(onDismissListener);
         alertDialog.setOnCancelListener(onCancelListener);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    final View view = alertDialog.getWindow().getDecorView();
+//                    int w = view.getWidth();
+//                    int h = view.getHeight();
+//
+//                    int endRadius = (int) Math.hypot(w, h);
+//
+//                    int cx = (int) (bubbleView.getX() + (bubbleView.getWidth()/2));
+//                    int cy = (int) (bubbleView.getY() + (bubbleView.getHeight() / 2));
+//
+//                    Animator animator = animator = ViewAnimationUtils.createCircularReveal(view, cx, cy, 0, endRadius);
+//
+//                    animator.setDuration(1000);
+//                    animator.start();
+
+                    final int centerX = view.getWidth() / 2;
+                    final int centerY = view.getHeight() / 2;
+                    // TODO Get startRadius from FAB
+                    // TODO Also translate animate FAB to center of screen?
+                    float startRadius = 20;
+                    float endRadius = view.getHeight();
+                    Animator animator = null;
+                        animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                        animator.setDuration(1000);
+                        animator.start();
+
+                }
+            });
+        }
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
