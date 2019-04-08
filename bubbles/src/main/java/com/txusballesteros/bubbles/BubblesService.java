@@ -172,13 +172,13 @@ public class BubblesService extends Service {
                 public void onShow(DialogInterface dialog) {
                     final View dialogView = alertDialog.getWindow().getDecorView();
 
-//                    final int centerX = view.getWidth() / 2;
-//                    final int centerY = view.getHeight() / 2;
-//                    float startRadius = 20;
-//                    float endRadius = view.getHeight();
-//                    Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-//                    animator.setDuration(1000);
-//                    animator.start();
+                    final int centerX = view.getWidth() / 2;
+                    final int centerY = view.getHeight() / 2;
+                    float startRadius = 20;
+                    float endRadius = view.getHeight();
+                    Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                    animator.setDuration(1000);
+                    animator.start();
 
                     final Animation animShake = AnimationUtils.loadAnimation(view.getContext(), R.anim.shake);
                     BubbleBounceInterpolator interpolator = new BubbleBounceInterpolator(0.2, 20);
