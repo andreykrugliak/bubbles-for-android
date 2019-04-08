@@ -24,17 +24,19 @@
  */
 package com.txusballesteros.bubbles.app;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.txusballesteros.bubbles.BubbleLayout;
 import com.txusballesteros.bubbles.BubblesManager;
 import com.txusballesteros.bubbles.OnInitializedCallback;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private BubblesManager bubblesManager;
 
@@ -54,16 +56,51 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void addNewBubble() {
-        BubbleLayout bubbleView = (BubbleLayout)LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
+        final BubbleLayout bubbleView = (BubbleLayout) LayoutInflater.from(MainActivity.this).inflate(R.layout.bubble_layout, null);
         bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
             @Override
-            public void onBubbleRemoved(BubbleLayout bubble) { }
+            public void onBubbleRemoved(BubbleLayout bubble) {
+            }
         });
+
+        final AlertDialog[] dialog = new AlertDialog[1];
+
+        final View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.view_dialog, null, false);
+        (dialogView.findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bubblesManager.removeDialog(bubbleView, dialog[0]);
+                dialog[0] = null;
+            }
+        });
+
+        bubbleView.setDialogView(dialogView);
+
         bubbleView.setOnBubbleClickListener(new BubbleLayout.OnBubbleClickListener() {
 
             @Override
-            public void onBubbleClick(BubbleLayout bubble) {
+            public void onBubbleClick(final BubbleLayout bubble) {
                 Toast.makeText(getApplicationContext(), "Clicked !",
+                        Toast.LENGTH_SHORT).show();
+
+                if (bubble.getDialogView() != null) {
+                    dialog[0] = bubblesManager.addDialogView(bubbleView, bubble.getDialogView(), null, null);
+                }
+            }
+        });
+        bubbleView.setOnHoldingBubbleListener(new BubbleLayout.OnHoldingBubbleListener() {
+            @Override
+            public void onHoldingBubble(BubbleLayout bubble) {
+                Toast.makeText(getApplicationContext(), "You are holding Bubble!",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        bubbleView.setOnBubbleStickToWallListener(new BubbleLayout.OnBubbleStickToWallListener() {
+            @Override
+            public void onBubbleStickToWall(BubbleLayout bubble, boolean leftSide) {
+                String side = leftSide ? "left side" : "right side";
+
+                Toast.makeText(getApplicationContext(), "Bubble has stick on " + side + " wall",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -73,14 +110,16 @@ public class MainActivity extends ActionBarActivity {
 
     private void initializeBubblesManager() {
         bubblesManager = new BubblesManager.Builder(this)
-                                    .setTrashLayout(R.layout.bubble_trash_layout)
-                                    .setInitializationCallback(new OnInitializedCallback() {
-                                        @Override
-                                        public void onInitialized() {
-                                            addNewBubble();
-                                        }
-                                    })
-                                    .build();
+                .setAllowRedundancies(false)
+                .setTrashLayout(R.layout.bubble_trash_layout)
+                .setTrashAnimations(R.animator.bubble_trash_shown_animator, R.animator.bubble_trash_hide_animator)
+                .setInitializationCallback(new OnInitializedCallback() {
+                    @Override
+                    public void onInitialized() {
+                        addNewBubble();
+                    }
+                })
+                .build();
         bubblesManager.initialize();
     }
 

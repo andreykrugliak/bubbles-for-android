@@ -24,11 +24,14 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.view.View;
 
 public class BubblesManager {
     private static BubblesManager INSTANCE;
@@ -37,6 +40,10 @@ public class BubblesManager {
     private BubblesService bubblesService;
     private int trashLayoutResourceId;
     private OnInitializedCallback listener;
+    private int shownAnimatorResourceId;
+    private int hideAnimatorResourceId;
+    private boolean allowRedundancies = true;
+
 
     private static BubblesManager getInstance(Context context) {
         if (INSTANCE == null) {
@@ -69,6 +76,8 @@ public class BubblesManager {
 
     private void configureBubblesService() {
         bubblesService.addTrash(trashLayoutResourceId);
+        bubblesService.addTrashAnimations(shownAnimatorResourceId, hideAnimatorResourceId);
+        bubblesService.setAllowRedundancies(allowRedundancies);
     }
 
     public void initialize() {
@@ -93,6 +102,14 @@ public class BubblesManager {
         }
     }
 
+    public void removeDialog(final BubbleLayout bubbleView, AlertDialog dialog) {
+        bubblesService.removeDialog(bubbleView, dialog);
+    }
+
+    public AlertDialog addDialogView(BubbleLayout bubbleView, View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+        return bubblesService.addDialogView(bubbleView, view, onDismissListener, onCancelListener);
+    }
+
     public static class Builder {
         private BubblesManager bubblesManager;
 
@@ -105,8 +122,19 @@ public class BubblesManager {
             return this;
         }
 
+        public Builder setAllowRedundancies(boolean allowRedundancies) {
+            bubblesManager.allowRedundancies =allowRedundancies;
+            return this;
+        }
+
         public Builder setTrashLayout(int trashLayoutResourceId) {
             bubblesManager.trashLayoutResourceId =trashLayoutResourceId;
+            return this;
+        }
+
+        public Builder setTrashAnimations(int shownAnimatorResourceId, int hideAnimatorResourceId) {
+            bubblesManager.shownAnimatorResourceId = shownAnimatorResourceId;
+            bubblesManager.hideAnimatorResourceId = hideAnimatorResourceId;
             return this;
         }
 

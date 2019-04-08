@@ -24,19 +24,23 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.animation.Animator;
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +51,7 @@ public class BubblesService extends Service {
     private BubbleTrashLayout bubblesTrash;
     private WindowManager windowManager;
     private BubblesLayoutCoordinator layoutCoordinator;
+    private boolean allowRedundancies = true;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -78,14 +83,31 @@ public class BubblesService extends Service {
         });
     }
 
+    private void recycleDialog(final BubbleLayout bubbleView, final AlertDialog dialog) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                dialog.cancel();
+            }
+        });
+    }
+
     private WindowManager getWindowManager() {
         if (windowManager == null) {
-            windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         }
         return windowManager;
     }
 
     public void addBubble(BubbleLayout bubble, int x, int y) {
+        if (!allowRedundancies && bubble.getTag() != null) {
+            for (BubbleLayout bubbleLayout : bubbles) {
+                if (bubble.getTag().equals(bubbleLayout.getTag())) {
+                    return;
+                }
+            }
+        }
+
         WindowManager.LayoutParams layoutParams = buildLayoutParamsForBubble(x, y);
         bubble.setWindowManager(getWindowManager());
         bubble.setViewParams(layoutParams);
@@ -106,6 +128,89 @@ public class BubblesService extends Service {
         }
     }
 
+    void addTrashAnimations(int shownAnimatorResourceId, int hideAnimatorResourceId) {
+        if (shownAnimatorResourceId != 0 && hideAnimatorResourceId != 0 && bubblesTrash != null) {
+            bubblesTrash.setTrashAnimatorResourceIds(shownAnimatorResourceId, hideAnimatorResourceId);
+        }
+    }
+
+    public void setAllowRedundancies(boolean allowRedundancies) {
+        this.allowRedundancies = allowRedundancies;
+    }
+
+    public AlertDialog addDialogView(final BubbleLayout bubbleView, final View view, final DialogInterface.OnDismissListener onDismissListener, final DialogInterface.OnCancelListener onCancelListener) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(BubblesService.this).setView(view);
+        final AlertDialog alertDialog = builder.create();
+
+        int typeOverlay = WindowManager.LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            typeOverlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setType(typeOverlay);
+        }
+
+        alertDialog.setOnDismissListener(onDismissListener);
+        alertDialog.setOnCancelListener(onCancelListener);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    final View view = alertDialog.getWindow().getDecorView();
+
+                    final int centerX = view.getWidth() / 2;
+                    final int centerY = view.getHeight() / 2;
+                    float startRadius = 20;
+                    float endRadius = view.getHeight();
+                    Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                    animator.setDuration(1000);
+                    animator.start();
+                }
+            });
+        }
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (view.getParent() != null) {
+                    ((ViewGroup) view.getParent()).removeView(view);
+                }
+
+                bubbleView.setOnBubbleGoToCenterListener(new BubbleLayout.OnBubbleGoToCenterListener() {
+                    @Override
+                    public void onBubbleGoToCenterListener(BubbleLayout bubble, final int oldX, final int oldY) {
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                bubbleView.setVisibility(View.INVISIBLE);
+                                alertDialog.setCancelable(true);
+
+                                alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        bubbleView.setVisibility(View.VISIBLE);
+                                        bubbleView.goTo(oldX, oldY);
+                                    }
+                                });
+                            }
+                        }, 1000);
+
+                        alertDialog.setCancelable(false);
+                        alertDialog.show();
+                    }
+                });
+
+                bubbleView.goToCenter();
+            }
+        });
+
+        return alertDialog;
+    }
+
     private void initializeLayoutCoordinator() {
         layoutCoordinator = new BubblesLayoutCoordinator.Builder(this)
                 .setWindowManager(getWindowManager())
@@ -123,10 +228,15 @@ public class BubblesService extends Service {
     }
 
     private WindowManager.LayoutParams buildLayoutParamsForBubble(int x, int y) {
+        int typeOverlay = WindowManager.LayoutParams.TYPE_PHONE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            typeOverlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                typeOverlay,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
         params.gravity = Gravity.TOP | Gravity.START;
@@ -138,10 +248,16 @@ public class BubblesService extends Service {
     private WindowManager.LayoutParams buildLayoutParamsForTrash() {
         int x = 0;
         int y = 0;
+
+        int typeOverlay = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            typeOverlay = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        }
+
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                typeOverlay,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSPARENT);
         params.x = x;
@@ -151,6 +267,10 @@ public class BubblesService extends Service {
 
     public void removeBubble(BubbleLayout bubble) {
         recycleBubble(bubble);
+    }
+
+    public void removeDialog(final BubbleLayout bubbleView, AlertDialog dialog) {
+        recycleDialog(bubbleView, dialog);
     }
 
     public class BubblesServiceBinder extends Binder {
