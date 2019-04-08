@@ -30,6 +30,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.txusballesteros.bubbles.BubbleLayout;
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         bubbleView.setShouldStickToWall(true);
+        bubbleView.setTag("Click");
         bubblesManager.addBubble(bubbleView, 60, 20);
     }
 

@@ -24,9 +24,15 @@
  */
 package com.txusballesteros.bubbles;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 class BubbleBaseLayout extends FrameLayout {
@@ -68,5 +74,17 @@ class BubbleBaseLayout extends FrameLayout {
 
     public BubbleBaseLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    public void shakeAnimation() {
+//        final Animation animShake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
+//        BubbleBounceInterpolator interpolator = new BubbleBounceInterpolator(0.2, 20);
+//        animShake.setInterpolator(interpolator);
+//        this.startAnimation(animShake);
+
+//        AnimatorSet animator = (AnimatorSet) AnimatorInflater
+//                .loadAnimator(getContext(), R.animator.bubble_shown_animator);
+//        animator.setTarget(this);
+//        animator.start();
     }
 }
