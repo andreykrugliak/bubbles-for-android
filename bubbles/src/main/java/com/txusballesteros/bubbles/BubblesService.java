@@ -105,8 +105,8 @@ public class BubblesService extends Service {
             for (BubbleLayout bubbleLayout : bubbles) {
                 if (bubble.getTag().equals(bubbleLayout.getTag())) {
                     ObjectAnimator
-                            .ofFloat(bubbleLayout, "translationX", 0, 25, 0, 25, -0, 15, -0, 6, -0, 0)
-                            .setDuration(2000)
+                            .ofFloat(bubbleLayout, "translationX", 0, 25, 0, 25, -0,15, -0, 6, -0, 0)
+                            .setDuration(1000)
                             .start();
 
                     return;
