@@ -90,6 +90,10 @@ public class BubblesManager {
         context.unbindService(bubbleServiceConnection);
     }
 
+    public void clear() {
+        bubblesService.clearBubbles();
+    }
+
     public void addBubble(BubbleLayout bubble, int x, int y) {
         if (bounded) {
             bubblesService.addBubble(bubble, x, y);

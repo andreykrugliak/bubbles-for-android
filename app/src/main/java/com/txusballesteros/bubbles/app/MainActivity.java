@@ -55,6 +55,16 @@ public class MainActivity extends AppCompatActivity {
                 addNewBubble();
             }
         });
+        findViewById(R.id.clear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removedBubbles();
+            }
+        });
+    }
+
+    private void removedBubbles() {
+        bubblesManager.clear();
     }
 
     private void addNewBubble() {

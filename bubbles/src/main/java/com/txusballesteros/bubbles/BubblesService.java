@@ -25,13 +25,11 @@
 package com.txusballesteros.bubbles;
 
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.Build;
@@ -46,7 +44,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +61,11 @@ public class BubblesService extends Service {
         return binder;
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
+    public void clearBubbles() {
         for (BubbleLayout bubble : bubbles) {
             recycleBubble(bubble);
         }
         bubbles.clear();
-        return super.onUnbind(intent);
     }
 
     private void recycleBubble(final BubbleLayout bubble) {
@@ -110,7 +105,7 @@ public class BubblesService extends Service {
             for (BubbleLayout bubbleLayout : bubbles) {
                 if (bubble.getTag().equals(bubbleLayout.getTag())) {
                     ObjectAnimator
-                            .ofFloat(bubbleLayout, "translationX", 0, 25, 0, 25, -0,15, -0, 6, -0, 0)
+                            .ofFloat(bubbleLayout, "translationX", 0, 25, 0, 25, -0, 15, -0, 6, -0, 0)
                             .setDuration(2000)
                             .start();
 
