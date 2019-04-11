@@ -24,14 +24,10 @@
  */
 package com.txusballesteros.bubbles;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Binder;
 import android.os.Build;
@@ -41,12 +37,8 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +50,16 @@ public class BubblesService extends Service {
     private WindowManager windowManager;
     private BubblesLayoutCoordinator layoutCoordinator;
     private boolean allowRedundancies = true;
+    private RedundancyAnimationListener redundancyAnimationListener;
+    private OnShowingDialogViewAnimationListener viewAnimationListener;
+
+    public interface RedundancyAnimationListener {
+        void redundanciesAnimation(BubbleLayout bubble);
+    }
+
+    public interface OnShowingDialogViewAnimationListener {
+        void onShowingDialogViewAnimation(AlertDialog alertDialog, final BubbleLayout bubbleView, final View view);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -71,6 +73,14 @@ public class BubblesService extends Service {
         }
         bubbles.clear();
         return super.onUnbind(intent);
+    }
+
+    public void setRedundancyAnimationListener(RedundancyAnimationListener redundancieAnimationListener) {
+        this.redundancyAnimationListener = redundancieAnimationListener;
+    }
+
+    public void setViewAnimationListener(OnShowingDialogViewAnimationListener viewAnimationListener) {
+        this.viewAnimationListener = viewAnimationListener;
     }
 
     private void recycleBubble(final BubbleLayout bubble) {
@@ -109,10 +119,9 @@ public class BubblesService extends Service {
         if (!allowRedundancies && bubble.getTag() != null) {
             for (BubbleLayout bubbleLayout : bubbles) {
                 if (bubble.getTag().equals(bubbleLayout.getTag())) {
-                    ObjectAnimator
-                            .ofFloat(bubbleLayout, "translationX", 0, 25, 0, 25, -0,15, -0, 6, -0, 0)
-                            .setDuration(1000)
-                            .start();
+                    if (redundancyAnimationListener != null) {
+                        redundancyAnimationListener.redundanciesAnimation(bubbleLayout);
+                    }
 
                     return;
                 }
@@ -170,20 +179,9 @@ public class BubblesService extends Service {
             alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialog) {
-                    final View dialogView = alertDialog.getWindow().getDecorView();
-
-                    final int centerX = dialogView.getWidth() / 2;
-                    final int centerY = dialogView.getHeight() / 2;
-                    float startRadius = 20;
-                    float endRadius = dialogView.getHeight();
-                    Animator animator = ViewAnimationUtils.createCircularReveal(dialogView, centerX, centerY, startRadius, endRadius);
-                    animator.setDuration(1000);
-                    animator.start();
-
-                    final Animation animShake = AnimationUtils.loadAnimation(view.getContext(), R.anim.shake);
-                    BubbleBounceInterpolator interpolator = new BubbleBounceInterpolator(0.2, 20);
-                    animShake.setInterpolator(interpolator);
-                    view.startAnimation(animShake);
+                    if (viewAnimationListener != null) {
+                        viewAnimationListener.onShowingDialogViewAnimation(alertDialog, bubbleView, view);
+                    }
                 }
             });
         }

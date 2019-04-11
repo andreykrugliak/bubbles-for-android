@@ -24,18 +24,22 @@
  */
 package com.txusballesteros.bubbles.app;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
+import com.txusballesteros.bubbles.BubbleBounceInterpolator;
 import com.txusballesteros.bubbles.BubbleLayout;
 import com.txusballesteros.bubbles.BubblesManager;
+import com.txusballesteros.bubbles.BubblesService;
 import com.txusballesteros.bubbles.OnInitializedCallback;
 
 public class MainActivity extends AppCompatActivity {
@@ -120,6 +124,40 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onInitialized() {
                         addNewBubble();
+                    }
+                })
+                .setRedundancyAnimation(new BubblesService.RedundancyAnimationListener() {
+                    @Override
+                    public void redundanciesAnimation(BubbleLayout bubble) {
+                        ObjectAnimator
+                                .ofFloat(bubble, "translationX", 0, 25, 0, 25, -0, 15, -0, 6, -0, 0)
+                                .setDuration(1000)
+                                .start();
+                    }
+                })
+                .setOnShowDialogViewAnimation(new BubblesService.OnShowingDialogViewAnimationListener() {
+
+                    @Override
+                    public void onShowingDialogViewAnimation(AlertDialog alertDialog, BubbleLayout bubbleView, View view) {
+                        if (alertDialog.getWindow() != null) {
+                            final View dialogView = alertDialog.getWindow().getDecorView();
+
+                            final int centerX = dialogView.getWidth() / 2;
+                            final int centerY = dialogView.getHeight() / 2;
+                            float startRadius = 20;
+                            float endRadius = dialogView.getHeight();
+
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                                Animator animator = ViewAnimationUtils.createCircularReveal(dialogView, centerX, centerY, startRadius, endRadius);
+                                animator.setDuration(1000);
+                                animator.start();
+                            }
+
+                            final Animation animShake = AnimationUtils.loadAnimation(view.getContext(), com.txusballesteros.bubbles.R.anim.shake);
+                            BubbleBounceInterpolator interpolator = new BubbleBounceInterpolator(0.2, 20);
+                            animShake.setInterpolator(interpolator);
+                            view.startAnimation(animShake);
+                        }
                     }
                 })
                 .build();
