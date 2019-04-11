@@ -43,6 +43,8 @@ public class BubblesManager {
     private int shownAnimatorResourceId;
     private int hideAnimatorResourceId;
     private boolean allowRedundancies = true;
+    private BubblesService.RedundancyAnimationListener redundancyAnimationListener;
+    private BubblesService.OnShowingDialogViewAnimationListener onShowDialogViewAnimationListener;
 
 
     private static BubblesManager getInstance(Context context) {
@@ -55,7 +57,7 @@ public class BubblesManager {
     private ServiceConnection bubbleServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            BubblesService.BubblesServiceBinder binder = (BubblesService.BubblesServiceBinder)service;
+            BubblesService.BubblesServiceBinder binder = (BubblesService.BubblesServiceBinder) service;
             BubblesManager.this.bubblesService = binder.getService();
             configureBubblesService();
             bounded = true;
@@ -78,6 +80,8 @@ public class BubblesManager {
         bubblesService.addTrash(trashLayoutResourceId);
         bubblesService.addTrashAnimations(shownAnimatorResourceId, hideAnimatorResourceId);
         bubblesService.setAllowRedundancies(allowRedundancies);
+        bubblesService.setRedundancyAnimationListener(redundancyAnimationListener);
+        bubblesService.setViewAnimationListener(onShowDialogViewAnimationListener);
     }
 
     public void initialize() {
@@ -127,18 +131,39 @@ public class BubblesManager {
         }
 
         public Builder setAllowRedundancies(boolean allowRedundancies) {
-            bubblesManager.allowRedundancies =allowRedundancies;
+            bubblesManager.allowRedundancies = allowRedundancies;
             return this;
         }
 
         public Builder setTrashLayout(int trashLayoutResourceId) {
-            bubblesManager.trashLayoutResourceId =trashLayoutResourceId;
+            bubblesManager.trashLayoutResourceId = trashLayoutResourceId;
             return this;
         }
 
         public Builder setTrashAnimations(int shownAnimatorResourceId, int hideAnimatorResourceId) {
             bubblesManager.shownAnimatorResourceId = shownAnimatorResourceId;
             bubblesManager.hideAnimatorResourceId = hideAnimatorResourceId;
+            return this;
+        }
+
+        /**
+         * If trying to add bubble which is already on the screen, this will animate bubble instead of creating another one.
+         * Only works if allowRedundancies is false
+         * @param listener for BubbleView Animation when trying to add bubble which is already on the screen
+         * @return A BubblesManager.Builder data type
+         */
+        public Builder setRedundancyAnimation(BubblesService.RedundancyAnimationListener listener) {
+            bubblesManager.redundancyAnimationListener = listener;
+            return this;
+        }
+
+        /**
+         * When showing DialogView from BubbleView (Should be from On Click) animate AlertDialog and DialogView opening
+         * @param listener for AlertDialog and DialogView Animation when opening DialogView
+         * @return A BubblesManager.Builder data type
+         */
+        public Builder setOnShowDialogViewAnimation(BubblesService.OnShowingDialogViewAnimationListener listener) {
+            bubblesManager.onShowDialogViewAnimationListener = listener;
             return this;
         }
 
