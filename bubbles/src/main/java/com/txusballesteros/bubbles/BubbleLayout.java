@@ -167,10 +167,8 @@ public class BubbleLayout extends BubbleBaseLayout {
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    goToWall();
                     if (getLayoutCoordinator() != null) {
                         getLayoutCoordinator().notifyBubbleRelease(this);
-                        updateSize();
                         // playAnimationClickUp();
                     }
                     if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
@@ -178,7 +176,6 @@ public class BubbleLayout extends BubbleBaseLayout {
                             onBubbleClickListener.onBubbleClick(this);
                         }
                     }
-
                     stopTimer();
                     break;
             }
@@ -213,7 +210,7 @@ public class BubbleLayout extends BubbleBaseLayout {
         }
     }
 
-    private void updateSize() {
+    public void updateSize() {
         DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
         Display display = getWindowManager().getDefaultDisplay();
