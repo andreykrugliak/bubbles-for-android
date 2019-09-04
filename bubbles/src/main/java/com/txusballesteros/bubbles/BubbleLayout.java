@@ -156,16 +156,16 @@ public class BubbleLayout extends BubbleBaseLayout {
 
                     setTimer();
                     break;
-                // case MotionEvent.ACTION_MOVE:
-                //     int x = initialX + (int) (event.getRawX() - initialTouchX);
-                //     int y = initialY + (int) (event.getRawY() - initialTouchY);
-                //     getViewParams().x = x;
-                //     getViewParams().y = y;
-                //     // getWindowManager().updateViewLayout(this, getViewParams());
-                //     if (getLayoutCoordinator() != null) {
-                //         getLayoutCoordinator().notifyBubblePositionChanged(this, x, y);
-                //     }
-                //     break;
+                case MotionEvent.ACTION_MOVE:
+                    int x = initialX + (int) (event.getRawX() - initialTouchX);
+                    int y = initialY + (int) (event.getRawY() - initialTouchY);
+                    getViewParams().x = x;
+                    getViewParams().y = y;
+                    getWindowManager().updateViewLayout(this, getViewParams());
+                    if (getLayoutCoordinator() != null) {
+                        getLayoutCoordinator().notifyBubblePositionChanged(this, x, y);
+                    }
+                    break;
                 // case MotionEvent.ACTION_UP:
                 //     goToWall();
                 //     if (getLayoutCoordinator() != null) {
