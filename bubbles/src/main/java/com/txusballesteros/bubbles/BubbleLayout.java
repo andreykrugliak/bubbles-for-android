@@ -151,7 +151,7 @@ public class BubbleLayout extends BubbleBaseLayout {
                     initialTouchY = event.getRawY();
                     playAnimationClickDown();
                     lastTouchDown = System.currentTimeMillis();
-                    updateSize();
+                    // updateSize();
                     animator.stop();
 
                     setTimer();
