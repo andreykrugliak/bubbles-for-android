@@ -149,37 +149,37 @@ public class BubbleLayout extends BubbleBaseLayout {
                     initialY = getViewParams().y;
                     initialTouchX = event.getRawX();
                     initialTouchY = event.getRawY();
-                    playAnimationClickDown();
+                    // playAnimationClickDown();
                     lastTouchDown = System.currentTimeMillis();
-                    updateSize();
+                    // updateSize();
                     animator.stop();
 
                     setTimer();
                     break;
-                case MotionEvent.ACTION_MOVE:
-                    int x = initialX + (int) (event.getRawX() - initialTouchX);
-                    int y = initialY + (int) (event.getRawY() - initialTouchY);
-                    getViewParams().x = x;
-                    getViewParams().y = y;
-                    getWindowManager().updateViewLayout(this, getViewParams());
-                    if (getLayoutCoordinator() != null) {
-                        getLayoutCoordinator().notifyBubblePositionChanged(this, x, y);
-                    }
-                    break;
-                case MotionEvent.ACTION_UP:
-                    goToWall();
-                    if (getLayoutCoordinator() != null) {
-                        getLayoutCoordinator().notifyBubbleRelease(this);
-                        playAnimationClickUp();
-                    }
-                    if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
-                        if (onBubbleClickListener != null) {
-                            onBubbleClickListener.onBubbleClick(this);
-                        }
-                    }
+                // case MotionEvent.ACTION_MOVE:
+                //     int x = initialX + (int) (event.getRawX() - initialTouchX);
+                //     int y = initialY + (int) (event.getRawY() - initialTouchY);
+                //     getViewParams().x = x;
+                //     getViewParams().y = y;
+                //     // getWindowManager().updateViewLayout(this, getViewParams());
+                //     if (getLayoutCoordinator() != null) {
+                //         getLayoutCoordinator().notifyBubblePositionChanged(this, x, y);
+                //     }
+                //     break;
+                // case MotionEvent.ACTION_UP:
+                //     goToWall();
+                //     if (getLayoutCoordinator() != null) {
+                //         getLayoutCoordinator().notifyBubbleRelease(this);
+                //         // playAnimationClickUp();
+                //     }
+                //     if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
+                //         if (onBubbleClickListener != null) {
+                //             onBubbleClickListener.onBubbleClick(this);
+                //         }
+                //     }
 
-                    stopTimer();
-                    break;
+                //     stopTimer();
+                //     break;
             }
         }
         return super.onTouchEvent(event);
