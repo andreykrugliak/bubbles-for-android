@@ -166,20 +166,20 @@ public class BubbleLayout extends BubbleBaseLayout {
                         getLayoutCoordinator().notifyBubblePositionChanged(this, x, y);
                     }
                     break;
-                // case MotionEvent.ACTION_UP:
-                //     goToWall();
-                //     if (getLayoutCoordinator() != null) {
-                //         getLayoutCoordinator().notifyBubbleRelease(this);
-                //         // playAnimationClickUp();
-                //     }
-                //     if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
-                //         if (onBubbleClickListener != null) {
-                //             onBubbleClickListener.onBubbleClick(this);
-                //         }
-                //     }
+                case MotionEvent.ACTION_UP:
+                    goToWall();
+                    if (getLayoutCoordinator() != null) {
+                        getLayoutCoordinator().notifyBubbleRelease(this);
+                        // playAnimationClickUp();
+                    }
+                    if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
+                        if (onBubbleClickListener != null) {
+                            onBubbleClickListener.onBubbleClick(this);
+                        }
+                    }
 
-                //     stopTimer();
-                //     break;
+                    stopTimer();
+                    break;
             }
         }
         return super.onTouchEvent(event);
