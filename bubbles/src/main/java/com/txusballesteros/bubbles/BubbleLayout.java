@@ -151,7 +151,7 @@ public class BubbleLayout extends BubbleBaseLayout {
                     initialTouchY = event.getRawY();
                     // playAnimationClickDown();
                     lastTouchDown = System.currentTimeMillis();
-                    // updateSize();
+                    updateSize();
                     animator.stop();
 
                     setTimer();
@@ -170,6 +170,7 @@ public class BubbleLayout extends BubbleBaseLayout {
                     goToWall();
                     if (getLayoutCoordinator() != null) {
                         getLayoutCoordinator().notifyBubbleRelease(this);
+                        updateSize();
                         // playAnimationClickUp();
                     }
                     if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
